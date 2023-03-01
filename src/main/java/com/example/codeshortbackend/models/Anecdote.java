@@ -27,7 +27,7 @@ public class Anecdote {
     @OneToMany(mappedBy = "anecdote")
     List<Comment> comments = new ArrayList<>();
 
-    @ManyToMany
+    @ManyToMany(mappedBy = "anecdotes")
     private List<Topic> topics;
 
     public Anecdote(String content, User author) {

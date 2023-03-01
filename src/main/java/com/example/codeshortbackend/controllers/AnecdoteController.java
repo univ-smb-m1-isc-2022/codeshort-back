@@ -48,7 +48,7 @@ public class AnecdoteController {
             @RequestBody AnecdoteFromTopicsRequest request
     ) {
         List<Topic> topics = topicRepository.findAllByNameIn(request.getTopics());
-        List<Anecdote> anecdotes = anecdoteRepository.findAllByTopics(topics);
+        List<Anecdote> anecdotes = anecdoteRepository.findAllByTopicsIn(topics);
         return ResponseEntity.ok(new AnecdoteFromTopicsResponse(anecdotes));
     }
 }
