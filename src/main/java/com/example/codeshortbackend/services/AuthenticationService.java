@@ -8,6 +8,7 @@ import com.example.codeshortbackend.models.Role;
 import com.example.codeshortbackend.models.User;
 import com.example.codeshortbackend.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;

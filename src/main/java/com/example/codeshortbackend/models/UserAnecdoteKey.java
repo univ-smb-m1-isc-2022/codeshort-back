@@ -17,8 +17,8 @@ import java.io.Serializable;
 class UserAnecdoteKey implements Serializable {
 
     @Column(name = "user_id")
-    Long userId;
+    Integer userId;
 
     @Column(name = "anecdote_id")
-    Long anecdoteId;
+    Integer anecdoteId;
 }

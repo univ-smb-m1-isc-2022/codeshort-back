@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -24,5 +25,13 @@ public class Anecdote {
     @JoinColumn(name="author_id", nullable=false)
     private User author;
     @OneToMany(mappedBy = "anecdote")
-    List<Comment> comments;
+    List<Comment> comments = new ArrayList<>();
+
+    @ManyToMany
+    private List<Topic> topics;
+
+    public Anecdote(String content, User author) {
+        this.content = content;
+        this.author = author;
+    }
 }
