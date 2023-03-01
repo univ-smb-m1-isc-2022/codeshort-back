@@ -1,4 +1,4 @@
-package com.example.codeshortbackend.user;
+package com.example.codeshortbackend.models;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -26,8 +26,14 @@ public class User implements UserDetails {
     private String username;
     private String email;
     private String password;
+    @Column(name = "picture_uri")
+    private String pictureUri;
+    @Column(name = "github_uri")
+    private String githubUri;
     @Enumerated(EnumType.STRING)
     private Role role;
+    @OneToMany(mappedBy="user")
+    private List<Anecdote> anecdotes;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

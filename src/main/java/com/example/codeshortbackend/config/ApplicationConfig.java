@@ -1,6 +1,6 @@
 package com.example.codeshortbackend.config;
 
-import com.example.codeshortbackend.user.UserRepository;
+import com.example.codeshortbackend.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

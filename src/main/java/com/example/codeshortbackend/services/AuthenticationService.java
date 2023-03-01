@@ -1,9 +1,12 @@
-package com.example.codeshortbackend.auth;
+package com.example.codeshortbackend.services;
 
 import com.example.codeshortbackend.config.JwtService;
-import com.example.codeshortbackend.user.Role;
-import com.example.codeshortbackend.user.User;
-import com.example.codeshortbackend.user.UserRepository;
+import com.example.codeshortbackend.requests.AuthenticationRequest;
+import com.example.codeshortbackend.requests.RegisterRequest;
+import com.example.codeshortbackend.responses.AuthenticationResponse;
+import com.example.codeshortbackend.models.Role;
+import com.example.codeshortbackend.models.User;
+import com.example.codeshortbackend.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

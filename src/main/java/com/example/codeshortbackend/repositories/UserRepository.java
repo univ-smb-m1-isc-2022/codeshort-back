@@ -1,5 +1,6 @@
-package com.example.codeshortbackend.user;
+package com.example.codeshortbackend.repositories;
 
+import com.example.codeshortbackend.models.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
