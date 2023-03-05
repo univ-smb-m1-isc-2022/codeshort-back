@@ -1,6 +1,5 @@
 package com.example.codeshortbackend.responses;
 
-import com.example.codeshortbackend.models.Anecdote;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,6 +11,6 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AnecdoteFromTopicsResponse {
-    List<Anecdote> anecdotes;
+public class AnecdotesResponse {
+    List<AnecdoteDTO> anecdotes;
 }

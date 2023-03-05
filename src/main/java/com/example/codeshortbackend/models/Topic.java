@@ -1,5 +1,6 @@
 package com.example.codeshortbackend.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,10 +19,14 @@ public class Topic {
     @Id
     private String name;
 
-    @ManyToMany
-    @JoinTable(
-            name = "topic_anecdote",
-            joinColumns = @JoinColumn(name = "topic_name"),
-            inverseJoinColumns = @JoinColumn(name = "anecdote_id"))
+    @ManyToMany(mappedBy = "topics")
+    @JsonIgnore
     List<Anecdote> anecdotes;
+
+    @Override
+    public String toString() {
+        return "Topic{" +
+                "name='" + name + '\'' +
+                '}';
+    }
 }

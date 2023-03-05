@@ -1,4 +1,4 @@
-package com.example.codeshortbackend.requests;
+package com.example.codeshortbackend.responses;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,7 +11,6 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreateAnecdoteRequest {
-    private String content;
-    private List<String> topics;
+public class CommentsResponse {
+    List<CommentDTO> comments;
 }

@@ -27,11 +27,40 @@ public class Anecdote {
     @OneToMany(mappedBy = "anecdote")
     List<Comment> comments = new ArrayList<>();
 
-    @ManyToMany(mappedBy = "anecdotes")
+    @ManyToMany
+    @JoinTable(
+            name = "topic_anecdote",
+            joinColumns = @JoinColumn(name = "anecdote_id", referencedColumnName="id"),
+            inverseJoinColumns = @JoinColumn(name = "topic_name", referencedColumnName="name")
+    )
     private List<Topic> topics;
 
-    public Anecdote(String content, User author) {
+    private Integer upvotes;
+    private Integer downvotes;
+
+    public Anecdote(String content, User author, List<Topic> topics) {
         this.content = content;
         this.author = author;
+        this.topics = topics;
+        this.upvotes = 0;
+        this.downvotes = 0;
+    }
+
+    public void changeUpvote(boolean isIncremented){
+        if (isIncremented) {
+            upvotes++;
+        }
+        else {
+            upvotes--;
+        }
+    }
+
+    public void changeDownvote(boolean isIncremented){
+        if (isIncremented) {
+            downvotes++;
+        }
+        else {
+            downvotes--;
+        }
     }
 }

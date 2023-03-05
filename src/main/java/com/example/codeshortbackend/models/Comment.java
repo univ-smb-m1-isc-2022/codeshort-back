@@ -14,18 +14,23 @@ import lombok.NoArgsConstructor;
 @Table(name = "comment")
 public class Comment {
 
-    @EmbeddedId
-    UserAnecdoteKey id;
+    @Id
+    @GeneratedValue
+    private Integer id;
 
     @ManyToOne
-    @MapsId("userId")
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable=false)
     User user;
 
     @ManyToOne
-    @MapsId("anecdoteId")
-    @JoinColumn(name = "anecdote_id")
+    @JoinColumn(name = "anecdote_id", nullable=false)
     Anecdote anecdote;
 
     private String comment;
+
+    public Comment(User user, Anecdote anecdote, String comment) {
+        this.user = user;
+        this.anecdote = anecdote;
+        this.comment = comment;
+    }
 }
