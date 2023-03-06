@@ -1,7 +1,9 @@
 package com.example.codeshortbackend.responses;
 
 import com.example.codeshortbackend.models.Anecdote;
+import com.example.codeshortbackend.models.Rating;
 import com.example.codeshortbackend.models.Topic;
+import com.example.codeshortbackend.models.Vote;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,7 +24,8 @@ public class AnecdoteDTO {
     Integer upvotes;
     Integer downvotes;
     List<String> topics = new ArrayList<>();
-    // TODO get les réactions qu'on a mises
+    Vote vote;
+    boolean starred;
 
     public AnecdoteDTO(Anecdote anecdote) {
         this.id = anecdote.getId();
@@ -33,5 +36,20 @@ public class AnecdoteDTO {
         for (Topic topic: anecdote.getTopics()) {
             topics.add(topic.getName());
         }
+        this.vote = Vote.NONE;
+        this.starred = false;
+    }
+
+    public AnecdoteDTO(Rating rating) {
+        this.id = rating.getAnecdote().getId();
+        this.content = rating.getAnecdote().getContent();
+        this.author = rating.getAnecdote().getAuthor().getUsername();
+        this.upvotes = rating.getAnecdote().getUpvotes();
+        this.downvotes = rating.getAnecdote().getDownvotes();
+        for (Topic topic: rating.getAnecdote().getTopics()) {
+            topics.add(topic.getName());
+        }
+        this.vote = rating.getVote();
+        this.starred = rating.isStarred();
     }
 }

@@ -28,7 +28,7 @@ public class CommentController {
     private final UserRepository userRepository;
     private final CommentRepository commentRepository;
 
-    @PostMapping("/")
+    @PostMapping("")
     public ResponseEntity<?> createComment(
             @PathVariable Integer anecdoteId,
             @RequestBody CreateCommentRequest request
@@ -48,7 +48,7 @@ public class CommentController {
         return ResponseEntity.ok(new SuccessResponse("Comment created"));
     }
 
-    @GetMapping("/")
+    @GetMapping("/all")
     public ResponseEntity<?> all(@PathVariable Integer anecdoteId) {
 
         Optional<Anecdote> anecdote = anecdoteRepository.findById(anecdoteId);

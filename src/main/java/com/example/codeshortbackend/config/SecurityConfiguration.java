@@ -23,7 +23,13 @@ public class SecurityConfiguration {
         http.csrf()
                 .disable()
                 .authorizeHttpRequests()
-                .requestMatchers("/api/auth/**", "/api/anecdote/random")
+                .requestMatchers("/api/auth/**",
+                        "/api/anecdote/random",
+                        "/api/topic",
+                        "/api/anecdote/topics",
+                        "/api/anecdote/{anecdoteId}/comment/all",
+                        "/api/anecdote/user/{username}"
+                )
                 .permitAll()
                 .anyRequest()
                 .authenticated()

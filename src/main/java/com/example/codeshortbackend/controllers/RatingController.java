@@ -84,7 +84,7 @@ public class RatingController {
         List<AnecdoteDTO> anecdotes = new ArrayList<>();
 
         for (Rating r: ratings) {
-            anecdotes.add(new AnecdoteDTO(r.getAnecdote()));
+            anecdotes.add(new AnecdoteDTO(r));
         }
         return ResponseEntity.ok(new AnecdotesResponse(anecdotes));
     }
