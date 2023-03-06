@@ -76,9 +76,10 @@ public class RatingController {
         }
     }
 
-    @GetMapping("/starred")
-    public ResponseEntity<?> getStarred() {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+    @GetMapping("/starred/{username}")
+    public ResponseEntity<?> getStarred(
+            @PathVariable String username
+    ) {
         User user = userRepository.findByUsername(username).orElseThrow();
         List<Rating> ratings = ratingRepository.findAllByUserAndStarredTrue(user);
         List<AnecdoteDTO> anecdotes = new ArrayList<>();
