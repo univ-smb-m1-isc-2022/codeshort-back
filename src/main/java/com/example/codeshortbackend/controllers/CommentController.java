@@ -40,7 +40,7 @@ public class CommentController {
         if(anecdote.isEmpty()) {
             return ResponseEntity
                     .badRequest()
-                    .body("Error, The corpus doesn't exist");
+                    .body("Error, The anecdote doesn't exist");
         }
 
         Comment comment = new Comment(user, anecdote.get(), request.getContent());
@@ -55,7 +55,7 @@ public class CommentController {
         if(anecdote.isEmpty()) {
             return ResponseEntity
                     .badRequest()
-                    .body("Error, The corpus doesn't exist");
+                    .body("Error, The anecdote doesn't exist");
         }
 
         List<CommentDTO> comments = new ArrayList<>();

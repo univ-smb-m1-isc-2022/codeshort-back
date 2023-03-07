@@ -10,9 +10,7 @@ import com.example.codeshortbackend.repositories.TopicRepository;
 import com.example.codeshortbackend.repositories.UserRepository;
 import com.example.codeshortbackend.requests.CreateAnecdoteRequest;
 import com.example.codeshortbackend.requests.AnecdoteFromTopicsRequest;
-import com.example.codeshortbackend.responses.AnecdoteDTO;
-import com.example.codeshortbackend.responses.AnecdotesResponse;
-import com.example.codeshortbackend.responses.SuccessResponse;
+import com.example.codeshortbackend.responses.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -122,6 +120,6 @@ public class AnecdoteController {
                 else resultAnecdote.add(new AnecdoteDTO(rating.get()));
             }
         }
-        return ResponseEntity.ok(new AnecdotesResponse(resultAnecdote));
+        return ResponseEntity.ok(new UserAnecdoteResponse(resultAnecdote, new UserDTO(user.get())));
     }
 }
