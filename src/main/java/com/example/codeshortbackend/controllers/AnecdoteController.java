@@ -70,7 +70,7 @@ public class AnecdoteController {
         return ResponseEntity.ok(new AnecdotesResponse(resultAnecdote));
     }
 
-    @GetMapping("/topics")
+    @PostMapping("/topics")
     public ResponseEntity<AnecdotesResponse> allFromTopics(
             @RequestBody AnecdoteFromTopicsRequest request
     ) {
