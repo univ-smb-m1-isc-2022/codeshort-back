@@ -11,6 +11,7 @@ import com.example.codeshortbackend.repositories.UserRepository;
 import com.example.codeshortbackend.requests.CreateAnecdoteRequest;
 import com.example.codeshortbackend.requests.AnecdoteFromTopicsRequest;
 import com.example.codeshortbackend.responses.*;
+import com.example.codeshortbackend.services.AnecdoteService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -27,71 +28,35 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class AnecdoteController {
 
-    private final AnecdoteRepository anecdoteRepository;
+    private final AnecdoteService anecdoteService;
     private final UserRepository userRepository;
-    private final TopicRepository topicRepository;
-    private final RatingRepository ratingRepository;
 
     @PostMapping("")
-    public ResponseEntity<SuccessResponse> createAnecdote(
+    public ResponseEntity<?> createAnecdote(
             @RequestBody CreateAnecdoteRequest request
     ) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        List<Topic> topics = topicRepository.findAllByNameIn(request.getTopics());
-        User user = userRepository.findByUsername(username).orElseThrow();
-        // TODO catch exception
-        Anecdote test = new Anecdote(
-                request.getContent(),
-                user,
-                topics
-        );
-        anecdoteRepository.save(test);
-        return ResponseEntity.ok(new SuccessResponse("Anecdote created"));
+        Optional<User> user = userRepository.findByUsername(username);
+
+        if(user.isEmpty()) {
+            return ResponseEntity
+                    .badRequest()
+                    .body("User not found");
+        }
+
+        return ResponseEntity.ok(anecdoteService.createAnecdote(request, user.get()));
     }
 
     @GetMapping("/random")
-    public ResponseEntity<AnecdotesResponse> allRandom() {
-        // TODO pagination
-        // TODO prendre les anecdotes de la semaine
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        Optional<User> user = userRepository.findByUsername(username);
-
-        List<Anecdote> anecdotes = anecdoteRepository.findAll();
-        Collections.shuffle(anecdotes);
-        List<AnecdoteDTO> resultAnecdote = new ArrayList<>();
-        for (Anecdote a: anecdotes) {
-            if(user.isEmpty()) resultAnecdote.add(new AnecdoteDTO(a));
-            else {
-                Optional<Rating> rating = ratingRepository.findByAnecdoteAndUser(a, user.get());
-                if(rating.isEmpty()) resultAnecdote.add(new AnecdoteDTO(a));
-                else resultAnecdote.add(new AnecdoteDTO(rating.get()));
-            }
-        }
-        return ResponseEntity.ok(new AnecdotesResponse(resultAnecdote));
+    public ResponseEntity<?> allRandom() {
+        return ResponseEntity.ok(anecdoteService.allRandom());
     }
 
     @PostMapping("/topics")
     public ResponseEntity<AnecdotesResponse> allFromTopics(
             @RequestBody AnecdoteFromTopicsRequest request
     ) {
-        // TODO pagination
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        Optional<User> user = userRepository.findByUsername(username);
-
-        List<Topic> topics = topicRepository.findAllByNameIn(request.getTopics());
-        List<Anecdote> anecdotes = anecdoteRepository.findAllByTopicsIn(topics);
-        List<AnecdoteDTO> resultAnecdote = new ArrayList<>();
-        for (Anecdote a: anecdotes) {
-            if(a.getTopics().containsAll(topics)) {
-                if(user.isEmpty()) resultAnecdote.add(new AnecdoteDTO(a));
-                else {
-                    Optional<Rating> rating = ratingRepository.findByAnecdoteAndUser(a, user.get());
-                    if(rating.isEmpty()) resultAnecdote.add(new AnecdoteDTO(a));
-                    else resultAnecdote.add(new AnecdoteDTO(rating.get()));
-                }
-            }
-        }
-        return ResponseEntity.ok(new AnecdotesResponse(resultAnecdote));
+        return ResponseEntity.ok(anecdoteService.allFromTopic(request));
     }
 
     @GetMapping("/user/{authorName}")
@@ -100,26 +65,12 @@ public class AnecdoteController {
     ) {
         // TODO pagination
         Optional<User> author = userRepository.findByUsername(authorName);
-
         if(author.isEmpty()) {
             return ResponseEntity
                     .badRequest()
                     .body("Error, The user doesn't exist");
         }
 
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        Optional<User> user = userRepository.findByUsername(username);
-
-        List<Anecdote> anecdotes = anecdoteRepository.findAllByAuthor(author.get());
-        List<AnecdoteDTO> resultAnecdote = new ArrayList<>();
-        for (Anecdote a: anecdotes) {
-            if(user.isEmpty()) resultAnecdote.add(new AnecdoteDTO(a));
-            else {
-                Optional<Rating> rating = ratingRepository.findByAnecdoteAndUser(a, user.get());
-                if(rating.isEmpty()) resultAnecdote.add(new AnecdoteDTO(a));
-                else resultAnecdote.add(new AnecdoteDTO(rating.get()));
-            }
-        }
-        return ResponseEntity.ok(new UserAnecdoteResponse(resultAnecdote, new UserDTO(user.get())));
+        return ResponseEntity.ok(anecdoteService.allFromUser(author.get()));
     }
 }

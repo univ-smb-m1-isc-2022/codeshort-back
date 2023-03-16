@@ -1,22 +1,16 @@
 package com.example.codeshortbackend.controllers;
 
 import com.example.codeshortbackend.models.Anecdote;
-import com.example.codeshortbackend.models.Comment;
 import com.example.codeshortbackend.models.User;
 import com.example.codeshortbackend.repositories.AnecdoteRepository;
-import com.example.codeshortbackend.repositories.CommentRepository;
 import com.example.codeshortbackend.repositories.UserRepository;
 import com.example.codeshortbackend.requests.CreateCommentRequest;
-import com.example.codeshortbackend.responses.CommentDTO;
-import com.example.codeshortbackend.responses.CommentsResponse;
-import com.example.codeshortbackend.responses.SuccessResponse;
+import com.example.codeshortbackend.services.CommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -26,7 +20,7 @@ import java.util.Optional;
 public class CommentController {
     private final AnecdoteRepository anecdoteRepository;
     private final UserRepository userRepository;
-    private final CommentRepository commentRepository;
+    private final CommentService commentService;
 
     @PostMapping("")
     public ResponseEntity<?> createComment(
@@ -34,18 +28,21 @@ public class CommentController {
             @RequestBody CreateCommentRequest request
     ) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        User user = userRepository.findByUsername(username).orElseThrow();
-        Optional<Anecdote> anecdote = anecdoteRepository.findById(anecdoteId);
+        Optional<User> user = userRepository.findByUsername(username);
+        if(user.isEmpty()) {
+            return ResponseEntity
+                    .badRequest()
+                    .body("User not found");
+        }
 
+        Optional<Anecdote> anecdote = anecdoteRepository.findById(anecdoteId);
         if(anecdote.isEmpty()) {
             return ResponseEntity
                     .badRequest()
-                    .body("Error, The anecdote doesn't exist");
+                    .body("Anecdote not found");
         }
 
-        Comment comment = new Comment(user, anecdote.get(), request.getContent());
-        commentRepository.save(comment);
-        return ResponseEntity.ok(new SuccessResponse("Comment created"));
+        return ResponseEntity.ok(commentService.createComment(user.get(),anecdote.get(),request));
     }
 
     @GetMapping("/all")
@@ -58,11 +55,6 @@ public class CommentController {
                     .body("Error, The anecdote doesn't exist");
         }
 
-        List<CommentDTO> comments = new ArrayList<>();
-
-        for (Comment c: anecdote.get().getComments()) {
-            comments.add(new CommentDTO(c));
-        }
-        return ResponseEntity.ok(new CommentsResponse(comments));
+        return ResponseEntity.ok(commentService.all(anecdote.get()));
     }
 }

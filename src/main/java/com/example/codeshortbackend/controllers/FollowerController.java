@@ -5,6 +5,7 @@ import com.example.codeshortbackend.repositories.FollowerRepository;
 import com.example.codeshortbackend.repositories.UserRepository;
 import com.example.codeshortbackend.requests.CreateCommentRequest;
 import com.example.codeshortbackend.responses.*;
+import com.example.codeshortbackend.services.FollowerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,22 +20,22 @@ import java.util.Optional;
 @RequestMapping("/api/user")
 @RequiredArgsConstructor
 public class FollowerController {
-    private final FollowerRepository followerRepository;
+    private final FollowerService followerService;
     private final UserRepository userRepository;
+    private final FollowerRepository followerRepository;
 
     @GetMapping("")
-    public ResponseEntity<UserFollowedResponse> getUsersFollowed() {
+    public ResponseEntity<?> getUsersFollowed() {
         String usernameFollower = SecurityContextHolder.getContext().getAuthentication().getName();
-        User follower = userRepository.findByUsername(usernameFollower).orElseThrow();
-        List<Follower> usersFollowed = followerRepository.findAllByFollower(follower);
 
-        List<UserDTO> users = new ArrayList<>();
-
-        for (Follower f: usersFollowed) {
-            users.add(new UserDTO(f));
+        Optional<User> follower = userRepository.findByUsername(usernameFollower);
+        if(follower.isEmpty()) {
+            return ResponseEntity
+                    .badRequest()
+                    .body("User not found");
         }
 
-        return ResponseEntity.ok(new UserFollowedResponse(users));
+        return ResponseEntity.ok(followerService.getUsersFollowed(follower.get()));
     }
 
     @PostMapping("/follow/{username}")
@@ -42,19 +43,28 @@ public class FollowerController {
             @PathVariable String  username
     ) {
         String usernameFollower = SecurityContextHolder.getContext().getAuthentication().getName();
-        User follower = userRepository.findByUsername(usernameFollower).orElseThrow();
-        User userFollowed = userRepository.findByUsername(username).orElseThrow();
 
-        if(followerRepository.existsByUserAndFollower(userFollowed, follower)) {
+        Optional<User> follower = userRepository.findByUsername(usernameFollower);
+        if(follower.isEmpty()) {
+            return ResponseEntity
+                    .badRequest()
+                    .body("User not found");
+        }
+
+        Optional<User> userFollowed = userRepository.findByUsername(username);
+        if(userFollowed.isEmpty()) {
+            return ResponseEntity
+                    .badRequest()
+                    .body("User followed found");
+        }
+
+        if(followerRepository.existsByUserAndFollower(userFollowed.get(), follower.get())) {
             return ResponseEntity
                     .badRequest()
                     .body("Error, The user is already followed");
         }
 
-        Follower newFollower = new Follower(userFollowed, follower);
-        followerRepository.save(newFollower);
-
-        return ResponseEntity.ok(new SuccessResponse("User follow"));
+        return ResponseEntity.ok(followerService.followUser(userFollowed.get(), follower.get()));
     }
 
     @PostMapping("/unfollow/{username}")
@@ -62,30 +72,51 @@ public class FollowerController {
             @PathVariable String  username
     ) {
         String usernameFollower = SecurityContextHolder.getContext().getAuthentication().getName();
-        User follower = userRepository.findByUsername(usernameFollower).orElseThrow();
-        User userFollowed = userRepository.findByUsername(username).orElseThrow();
 
-        Optional<Follower> follow = followerRepository.findByUserAndFollower(userFollowed, follower);
+        Optional<User> follower = userRepository.findByUsername(usernameFollower);
+        if(follower.isEmpty()) {
+            return ResponseEntity
+                    .badRequest()
+                    .body("User not found");
+        }
+
+        Optional<User> userFollowed = userRepository.findByUsername(username);
+        if(userFollowed.isEmpty()) {
+            return ResponseEntity
+                    .badRequest()
+                    .body("User followed found");
+        }
+
+        Optional<Follower> follow = followerRepository.findByUserAndFollower(userFollowed.get(), follower.get());
         if(follow.isEmpty()) {
             return ResponseEntity
                     .badRequest()
                     .body("Error, The relation doesn't exists");
         }
 
-        followerRepository.delete(follow.get());
-
-        return ResponseEntity.ok(new SuccessResponse("User unfollow"));
+        return ResponseEntity.ok(followerService.unfollowUser(follow.get()));
     }
 
     @GetMapping("/{username}")
-    public ResponseEntity<UserResponse> getUser(
+    public ResponseEntity<?> getUser(
             @PathVariable String  username
     ) {
         String usernameFollower = SecurityContextHolder.getContext().getAuthentication().getName();
-        User follower = userRepository.findByUsername(usernameFollower).orElseThrow();
-        User userFollowed = userRepository.findByUsername(username).orElseThrow();
 
-        boolean isFollowed = followerRepository.existsByUserAndFollower(userFollowed, follower);
-        return ResponseEntity.ok(new UserResponse(follower.getPictureUri(), isFollowed, follower.getGithubUri()));
+        Optional<User> follower = userRepository.findByUsername(usernameFollower);
+        if(follower.isEmpty()) {
+            return ResponseEntity
+                    .badRequest()
+                    .body("User not found");
+        }
+
+        Optional<User> userFollowed = userRepository.findByUsername(username);
+        if(userFollowed.isEmpty()) {
+            return ResponseEntity
+                    .badRequest()
+                    .body("User followed found");
+        }
+
+        return ResponseEntity.ok(followerService.getUser(userFollowed.get(),follower.get()));
     }
 }
