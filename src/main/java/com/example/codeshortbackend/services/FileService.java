@@ -27,7 +27,7 @@ public class FileService {
     public String uploadFile(MultipartFile file) {
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
         //TODO générer un nom de fichier aléatoire hashé en MD5 pour empecher deux fichiers d'avoir le même nom
-        Path pathFile = Paths.get("images/" + fileName);
+        Path pathFile = Paths.get(pathImages + "/" + fileName);
         try {
             Files.copy(file.getInputStream(), pathFile, StandardCopyOption.REPLACE_EXISTING);
             return fileName;
