@@ -43,7 +43,7 @@ public class RatingController {
         if(anecdote.isEmpty()) {
             return ResponseEntity
                     .badRequest()
-                    .body("Error, The corpus doesn't exist");
+                    .body("Error, The anecdote doesn't exist");
         }
 
         return ResponseEntity.ok(ratingService.rate(anecdote.get(),user.get(),request));
