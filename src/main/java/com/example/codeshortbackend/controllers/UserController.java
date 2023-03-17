@@ -36,7 +36,7 @@ public class UserController {
         }
 
         // TODO gérer si le file est en .png .jpg
-        String fileName = fileService.uploadFile(file);
+        String fileName = fileService.uploadProfilePicture(file, username);
 
         if(fileName == null) {
             return ResponseEntity

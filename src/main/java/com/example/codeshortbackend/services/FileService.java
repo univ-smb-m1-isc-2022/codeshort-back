@@ -24,9 +24,8 @@ public class FileService {
             System.out.println("INFO: " + this.pathImages + " already exists.");
     }
 
-    public String uploadFile(MultipartFile file) {
-        String fileName = StringUtils.cleanPath(file.getOriginalFilename());
-        //TODO générer un nom de fichier aléatoire hashé en MD5 pour empecher deux fichiers d'avoir le même nom
+    public String uploadProfilePicture(MultipartFile file, String username) {
+        String fileName = username + "." + file.getOriginalFilename().split("\\.")[1];
         Path pathFile = Paths.get(pathImages + "/" + fileName);
         try {
             Files.copy(file.getInputStream(), pathFile, StandardCopyOption.REPLACE_EXISTING);

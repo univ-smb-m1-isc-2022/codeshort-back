@@ -25,7 +25,7 @@ public class UserService {
         userRepository.save(user);
 
         return SuccessResponse.builder()
-                .response("Anecdote created")
+                .response(filename)
                 .build();
     }
 }
