@@ -29,6 +29,7 @@ import java.util.Optional;
 
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -126,7 +127,7 @@ public class AnecdoteControllerTest {
     public void allFromUser_shouldGiveThree() throws Exception{
         List<AnecdoteDTO> list = createAnecdotesDTOList(3);
 
-        when(authenticationService.findUser()).thenReturn(Optional.of(new User()));
+        when(userService.findByUsername(anyString())).thenReturn(Optional.of(new User()));
         when(anecdoteService.allFromUser(any())).thenReturn(
                 UserAnecdoteResponse.builder().anecdotes(list).build()
         );
