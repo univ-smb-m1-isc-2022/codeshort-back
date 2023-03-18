@@ -13,6 +13,7 @@ import com.example.codeshortbackend.requests.AnecdoteFromTopicsRequest;
 import com.example.codeshortbackend.responses.*;
 import com.example.codeshortbackend.services.AnecdoteService;
 import com.example.codeshortbackend.services.AuthenticationService;
+import com.example.codeshortbackend.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -31,6 +32,8 @@ public class AnecdoteController {
 
     private final AnecdoteService anecdoteService;
     private final AuthenticationService authenticationService;
+
+    private final UserService userService;
 
     @PostMapping("")
     public ResponseEntity<?> createAnecdote(
@@ -62,7 +65,7 @@ public class AnecdoteController {
     public ResponseEntity<?> allFromUser(
             @PathVariable String authorName
     ) {
-        Optional<User> author = authenticationService.findUser();
+        Optional<User> author = userService.findByUsername(authorName);
         if(author.isEmpty()) {
             return ResponseEntity
                     .badRequest()
