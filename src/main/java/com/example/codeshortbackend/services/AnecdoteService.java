@@ -115,4 +115,8 @@ public class AnecdoteService {
                 .build();
     }
 
+    public Optional<Anecdote> findById( Integer anecdoteId) {
+        return anecdoteRepository.findById(anecdoteId);
+    }
+
 }

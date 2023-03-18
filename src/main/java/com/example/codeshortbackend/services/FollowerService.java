@@ -64,5 +64,13 @@ public class FollowerService {
                 .build();
     }
 
+    public boolean existsByUserAndFollower(User userFollowed, User follower) {
+        return followerRepository.existsByUserAndFollower(userFollowed, follower);
+    }
+
+    public Optional<Follower> findByUserAndFollower(User userFollowed, User follower) {
+        return followerRepository.findByUserAndFollower(userFollowed, follower);
+    }
+
 
 }

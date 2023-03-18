@@ -5,7 +5,9 @@ import com.example.codeshortbackend.repositories.FollowerRepository;
 import com.example.codeshortbackend.repositories.UserRepository;
 import com.example.codeshortbackend.requests.CreateCommentRequest;
 import com.example.codeshortbackend.responses.*;
+import com.example.codeshortbackend.services.AuthenticationService;
 import com.example.codeshortbackend.services.FollowerService;
+import com.example.codeshortbackend.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,14 +23,12 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class FollowerController {
     private final FollowerService followerService;
-    private final UserRepository userRepository;
-    private final FollowerRepository followerRepository;
+    private final UserService userService;
+    private final AuthenticationService authenticationService;
 
     @GetMapping("")
     public ResponseEntity<?> getUsersFollowed() {
-        String usernameFollower = SecurityContextHolder.getContext().getAuthentication().getName();
-
-        Optional<User> follower = userRepository.findByUsername(usernameFollower);
+        Optional<User> follower = authenticationService.findUser();
         if(follower.isEmpty()) {
             return ResponseEntity
                     .badRequest()
@@ -42,23 +42,21 @@ public class FollowerController {
     public ResponseEntity<?> followUser(
             @PathVariable String  username
     ) {
-        String usernameFollower = SecurityContextHolder.getContext().getAuthentication().getName();
-
-        Optional<User> follower = userRepository.findByUsername(usernameFollower);
+        Optional<User> follower = authenticationService.findUser();
         if(follower.isEmpty()) {
             return ResponseEntity
                     .badRequest()
                     .body("User not found");
         }
 
-        Optional<User> userFollowed = userRepository.findByUsername(username);
+        Optional<User> userFollowed = userService.findByUsername(username);
         if(userFollowed.isEmpty()) {
             return ResponseEntity
                     .badRequest()
                     .body("User followed found");
         }
 
-        if(followerRepository.existsByUserAndFollower(userFollowed.get(), follower.get())) {
+        if(followerService.existsByUserAndFollower(userFollowed.get(), follower.get())) {
             return ResponseEntity
                     .badRequest()
                     .body("Error, The user is already followed");
@@ -71,23 +69,21 @@ public class FollowerController {
     public ResponseEntity<?> unfollowUser(
             @PathVariable String  username
     ) {
-        String usernameFollower = SecurityContextHolder.getContext().getAuthentication().getName();
-
-        Optional<User> follower = userRepository.findByUsername(usernameFollower);
+        Optional<User> follower = authenticationService.findUser();
         if(follower.isEmpty()) {
             return ResponseEntity
                     .badRequest()
                     .body("User not found");
         }
 
-        Optional<User> userFollowed = userRepository.findByUsername(username);
+        Optional<User> userFollowed = userService.findByUsername(username);
         if(userFollowed.isEmpty()) {
             return ResponseEntity
                     .badRequest()
                     .body("User followed found");
         }
 
-        Optional<Follower> follow = followerRepository.findByUserAndFollower(userFollowed.get(), follower.get());
+        Optional<Follower> follow = followerService.findByUserAndFollower(userFollowed.get(), follower.get());
         if(follow.isEmpty()) {
             return ResponseEntity
                     .badRequest()
@@ -101,16 +97,14 @@ public class FollowerController {
     public ResponseEntity<?> getUser(
             @PathVariable String  username
     ) {
-        String usernameFollower = SecurityContextHolder.getContext().getAuthentication().getName();
-
-        Optional<User> follower = userRepository.findByUsername(usernameFollower);
+        Optional<User> follower = authenticationService.findUser();
         if(follower.isEmpty()) {
             return ResponseEntity
                     .badRequest()
                     .body("User not found");
         }
 
-        Optional<User> userFollowed = userRepository.findByUsername(username);
+        Optional<User> userFollowed = userService.findByUsername(username);
         if(userFollowed.isEmpty()) {
             return ResponseEntity
                     .badRequest()

@@ -2,6 +2,7 @@ package com.example.codeshortbackend.controllers;
 
 import com.example.codeshortbackend.models.User;
 import com.example.codeshortbackend.repositories.UserRepository;
+import com.example.codeshortbackend.services.AuthenticationService;
 import com.example.codeshortbackend.services.FileService;
 import com.example.codeshortbackend.services.UserService;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +19,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserController {
 
-    private final UserRepository userRepository;
+    private final AuthenticationService authenticationService;
     private final UserService userService;
     private final FileService fileService;
 
@@ -26,8 +27,7 @@ public class UserController {
     @PostMapping("/picture")
     public ResponseEntity<?> changeProfilePicture(@RequestParam("file") MultipartFile file)
     {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        Optional<User> user = userRepository.findByUsername(username);
+        Optional<User> user = authenticationService.findUser();
 
         if(user.isEmpty()) {
             return ResponseEntity
@@ -36,8 +36,7 @@ public class UserController {
         }
 
         // TODO gérer si le file est en .png .jpg
-        String fileName = fileService.uploadProfilePicture(file, username);
-
+        String fileName = fileService.uploadProfilePicture(file, user.get().getUsername());
         if(fileName == null) {
             return ResponseEntity
                     .badRequest()

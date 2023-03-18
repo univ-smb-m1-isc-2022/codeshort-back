@@ -6,7 +6,10 @@ import com.example.codeshortbackend.repositories.RatingRepository;
 import com.example.codeshortbackend.repositories.UserRepository;
 import com.example.codeshortbackend.requests.RatingRequest;
 import com.example.codeshortbackend.responses.*;
+import com.example.codeshortbackend.services.AnecdoteService;
+import com.example.codeshortbackend.services.AuthenticationService;
 import com.example.codeshortbackend.services.RatingService;
+import com.example.codeshortbackend.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,24 +25,24 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class RatingController {
 
-    private final AnecdoteRepository anecdoteRepository;
-    private final UserRepository userRepository;
+    private final AnecdoteService anecdoteService;
+    private final UserService userService;
     private final RatingService ratingService;
+    private final AuthenticationService authenticationService;
 
     @PostMapping("/{anecdoteId}/rating")
     public ResponseEntity<?> rate(
             @PathVariable Integer anecdoteId,
             @RequestBody RatingRequest request
     ) {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        Optional<User> user = userRepository.findByUsername(username);
+        Optional<User> user = authenticationService.findUser();
         if(user.isEmpty()) {
             return ResponseEntity
                     .badRequest()
                     .body("User followed found");
         }
 
-        Optional<Anecdote> anecdote = anecdoteRepository.findById(anecdoteId);
+        Optional<Anecdote> anecdote = anecdoteService.findById(anecdoteId);
         if(anecdote.isEmpty()) {
             return ResponseEntity
                     .badRequest()
@@ -53,7 +56,7 @@ public class RatingController {
     public ResponseEntity<?> getStarred(
             @PathVariable String username
     ) {
-        Optional<User> user = userRepository.findByUsername(username);
+        Optional<User> user = userService.findByUsername(username);
         if(user.isEmpty()) {
             return ResponseEntity
                     .badRequest()

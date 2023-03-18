@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -27,5 +28,13 @@ public class UserService {
         return SuccessResponse.builder()
                 .response(filename)
                 .build();
+    }
+
+    public boolean existsByUsername( String username) {
+        return userRepository.existsByUsername(username);
+    }
+
+    public Optional<User> findByUsername(String username) {
+        return userRepository.findByUsername(username);
     }
 }

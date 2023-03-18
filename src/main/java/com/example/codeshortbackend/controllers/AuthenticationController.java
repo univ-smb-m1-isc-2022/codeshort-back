@@ -5,6 +5,7 @@ import com.example.codeshortbackend.responses.AuthenticationResponse;
 import com.example.codeshortbackend.services.AuthenticationService;
 import com.example.codeshortbackend.requests.AuthenticationRequest;
 import com.example.codeshortbackend.requests.RegisterRequest;
+import com.example.codeshortbackend.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,13 +17,13 @@ import org.springframework.web.bind.annotation.*;
 public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
-    private final UserRepository userRepository;
+    private final UserService userService;
 
     @PostMapping("/register")
     public ResponseEntity<?> register(
             @RequestBody RegisterRequest request
             ) {
-        if(userRepository.existsByUsername(request.getUsername())) {
+        if(userService.existsByUsername(request.getUsername())) {
             return ResponseEntity
                     .badRequest()
                     .body("Username already taken");

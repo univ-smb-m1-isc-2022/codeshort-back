@@ -5,6 +5,8 @@ import com.example.codeshortbackend.models.User;
 import com.example.codeshortbackend.repositories.AnecdoteRepository;
 import com.example.codeshortbackend.repositories.UserRepository;
 import com.example.codeshortbackend.requests.CreateCommentRequest;
+import com.example.codeshortbackend.services.AnecdoteService;
+import com.example.codeshortbackend.services.AuthenticationService;
 import com.example.codeshortbackend.services.CommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,8 +20,8 @@ import java.util.Optional;
 @RequestMapping("/api/anecdote/{anecdoteId}/comment")
 @RequiredArgsConstructor
 public class CommentController {
-    private final AnecdoteRepository anecdoteRepository;
-    private final UserRepository userRepository;
+    private final AnecdoteService anecdoteService;
+    private final AuthenticationService authenticationService;
     private final CommentService commentService;
 
     @PostMapping("")
@@ -27,15 +29,14 @@ public class CommentController {
             @PathVariable Integer anecdoteId,
             @RequestBody CreateCommentRequest request
     ) {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        Optional<User> user = userRepository.findByUsername(username);
+        Optional<User> user = authenticationService.findUser();
         if(user.isEmpty()) {
             return ResponseEntity
                     .badRequest()
                     .body("User not found");
         }
 
-        Optional<Anecdote> anecdote = anecdoteRepository.findById(anecdoteId);
+        Optional<Anecdote> anecdote = anecdoteService.findById(anecdoteId);
         if(anecdote.isEmpty()) {
             return ResponseEntity
                     .badRequest()
@@ -48,7 +49,7 @@ public class CommentController {
     @GetMapping("/all")
     public ResponseEntity<?> all(@PathVariable Integer anecdoteId) {
 
-        Optional<Anecdote> anecdote = anecdoteRepository.findById(anecdoteId);
+        Optional<Anecdote> anecdote = anecdoteService.findById(anecdoteId);
         if(anecdote.isEmpty()) {
             return ResponseEntity
                     .badRequest()
