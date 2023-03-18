@@ -12,6 +12,7 @@ import com.example.codeshortbackend.requests.CreateAnecdoteRequest;
 import com.example.codeshortbackend.requests.AnecdoteFromTopicsRequest;
 import com.example.codeshortbackend.responses.*;
 import com.example.codeshortbackend.services.AnecdoteService;
+import com.example.codeshortbackend.services.AuthenticationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -29,19 +30,17 @@ import java.util.Optional;
 public class AnecdoteController {
 
     private final AnecdoteService anecdoteService;
-    private final UserRepository userRepository;
+    private final AuthenticationService authenticationService;
 
     @PostMapping("")
     public ResponseEntity<?> createAnecdote(
             @RequestBody CreateAnecdoteRequest request
     ) {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        Optional<User> user = userRepository.findByUsername(username);
-
+        Optional<User> user = authenticationService.findUser();
         if(user.isEmpty()) {
             return ResponseEntity
                     .badRequest()
-                    .body("User not found");
+                    .body("Error, The user doesn't exist");
         }
 
         return ResponseEntity.ok(anecdoteService.createAnecdote(request, user.get()));
@@ -63,8 +62,7 @@ public class AnecdoteController {
     public ResponseEntity<?> allFromUser(
             @PathVariable String authorName
     ) {
-        // TODO pagination
-        Optional<User> author = userRepository.findByUsername(authorName);
+        Optional<User> author = authenticationService.findUser();
         if(author.isEmpty()) {
             return ResponseEntity
                     .badRequest()
