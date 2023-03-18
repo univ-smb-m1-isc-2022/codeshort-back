@@ -10,6 +10,7 @@ import com.example.codeshortbackend.responses.SuccessResponse;
 import com.example.codeshortbackend.responses.UserAnecdoteResponse;
 import com.example.codeshortbackend.services.AnecdoteService;
 import com.example.codeshortbackend.services.AuthenticationService;
+import com.example.codeshortbackend.services.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.checkerframework.checker.units.qual.A;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,13 +38,15 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standal
 public class AnecdoteControllerTest {
     private AuthenticationService authenticationService;
     private AnecdoteService anecdoteService;
+    private UserService userService;
     private MockMvc mockMvc;
 
     @BeforeEach
     public void init() {
         anecdoteService = mock(AnecdoteService.class);
         authenticationService = mock(AuthenticationService.class);
-        mockMvc = standaloneSetup(new AnecdoteController(anecdoteService,authenticationService)).build();
+        userService = mock(UserService.class);
+        mockMvc = standaloneSetup(new AnecdoteController(anecdoteService,authenticationService, userService)).build();
     }
 
     @Test
