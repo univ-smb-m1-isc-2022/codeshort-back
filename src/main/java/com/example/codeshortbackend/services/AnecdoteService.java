@@ -27,7 +27,7 @@ public class AnecdoteService {
 
     private final AnecdoteRepository anecdoteRepository;
     private final TopicRepository topicRepository;
-    private final UserRepository userRepository;
+    private final AuthenticationService authenticationService;
     private final RatingRepository ratingRepository;
 
     public SuccessResponse createAnecdote(CreateAnecdoteRequest request, User user) {
@@ -50,8 +50,7 @@ public class AnecdoteService {
         // TODO pagination
         // TODO prendre les anecdotes de la semaine
 
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        Optional<User> user = userRepository.findByUsername(username);
+        Optional<User> user = authenticationService.findUser();
 
         List<Anecdote> anecdotes = anecdoteRepository.findAll();
         Collections.shuffle(anecdotes);
@@ -72,8 +71,7 @@ public class AnecdoteService {
 
     public AnecdotesResponse allFromTopic(AnecdoteFromTopicsRequest request) {
         // TODO pagination
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        Optional<User> user = userRepository.findByUsername(username);
+        Optional<User> user = authenticationService.findUser();
 
         List<Topic> topics = topicRepository.findAllByNameIn(request.getTopics());
         List<Anecdote> anecdotes = anecdoteRepository.findAllByTopicsIn(topics);
@@ -95,8 +93,7 @@ public class AnecdoteService {
     }
 
     public UserAnecdoteResponse allFromUser(User author) {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        Optional<User> user = userRepository.findByUsername(username);
+        Optional<User> user = authenticationService.findUser();
 
         List<Anecdote> anecdotes = anecdoteRepository.findAllByAuthor(author);
         List<AnecdoteDTO> resultAnecdote = new ArrayList<>();
