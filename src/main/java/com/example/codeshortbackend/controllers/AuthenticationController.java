@@ -1,5 +1,6 @@
 package com.example.codeshortbackend.controllers;
 
+import com.example.codeshortbackend.models.User;
 import com.example.codeshortbackend.repositories.UserRepository;
 import com.example.codeshortbackend.responses.AuthenticationResponse;
 import com.example.codeshortbackend.services.AuthenticationService;
@@ -9,6 +10,8 @@ import com.example.codeshortbackend.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
@@ -35,7 +38,13 @@ public class AuthenticationController {
     public ResponseEntity<?> authenticate(
             @RequestBody AuthenticationRequest request
             ) {
-        return ResponseEntity.ok(authenticationService.authenticate(request));
+        Optional<User> user = userService.findByUsername(request.getUsername());
+        if(user.isEmpty()) {
+            return ResponseEntity
+                    .badRequest()
+                    .body("Error, The user doesn't exist");
+        }
+        return ResponseEntity.ok(authenticationService.authenticate(request, user.get()));
     }
 
 }
