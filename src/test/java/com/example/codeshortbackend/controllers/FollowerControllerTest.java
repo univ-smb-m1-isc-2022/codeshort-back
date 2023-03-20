@@ -192,11 +192,4 @@ public class FollowerControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.gitURI").value("uriGit"));
     }
 
-    public static String asJsonString(final Object obj) {
-        try {
-            return new ObjectMapper().writeValueAsString(obj);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
 }
