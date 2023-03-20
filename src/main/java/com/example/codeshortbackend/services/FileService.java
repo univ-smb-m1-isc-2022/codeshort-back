@@ -25,14 +25,18 @@ public class FileService {
     }
 
     public String uploadProfilePicture(MultipartFile file, String username) {
-        String fileName = username + "." + file.getOriginalFilename().split("\\.")[1];
-        Path pathFile = Paths.get(pathImages + "/" + fileName);
-        try {
-            Files.copy(file.getInputStream(), pathFile, StandardCopyOption.REPLACE_EXISTING);
-            return fileName;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
+        String extension = file.getOriginalFilename().split("\\.")[1];
+        if(extension == "png" || extension == "jpg") {
+            String fileName = username + "." + extension;
+            Path pathFile = Paths.get(pathImages + "/" + fileName);
+            try {
+                Files.copy(file.getInputStream(), pathFile, StandardCopyOption.REPLACE_EXISTING);
+                return fileName;
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            }
         }
+        return null;
     }
 }

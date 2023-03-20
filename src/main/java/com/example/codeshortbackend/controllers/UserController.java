@@ -40,7 +40,7 @@ public class UserController {
         if(fileName == null) {
             return ResponseEntity
                     .badRequest()
-                    .body("Error, unable to copy you file");
+                    .body("Error, unable to copy you file, server accept only png/jpg");
         }
 
         return ResponseEntity.ok(this.userService.changeProfilePicture(user.get(), fileName));
