@@ -184,6 +184,14 @@ public class AnecdoteControllerTest {
         ).andExpect(status().isOk());
     }
 
+    @Test
+    public void allFromUser_shouldBadRequest() throws Exception {
+        when(userService.findByUsername(anyString())).thenReturn(Optional.empty());
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/anecdote/user/test"))
+        .andExpect(status().isBadRequest());
+    }
+
     public static String asJsonString(final Object obj) {
         try {
             return new ObjectMapper().writeValueAsString(obj);
