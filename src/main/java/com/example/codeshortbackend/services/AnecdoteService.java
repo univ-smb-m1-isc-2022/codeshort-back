@@ -1,15 +1,10 @@
 package com.example.codeshortbackend.services;
 
-import com.example.codeshortbackend.models.Anecdote;
-import com.example.codeshortbackend.models.Rating;
-import com.example.codeshortbackend.models.Topic;
-import com.example.codeshortbackend.models.User;
-import com.example.codeshortbackend.repositories.AnecdoteRepository;
-import com.example.codeshortbackend.repositories.RatingRepository;
-import com.example.codeshortbackend.repositories.TopicRepository;
-import com.example.codeshortbackend.repositories.UserRepository;
+import com.example.codeshortbackend.models.*;
+import com.example.codeshortbackend.repositories.*;
 import com.example.codeshortbackend.requests.AnecdoteFromTopicsRequest;
 import com.example.codeshortbackend.requests.CreateAnecdoteRequest;
+import com.example.codeshortbackend.requests.ReportAnecdoteRequest;
 import com.example.codeshortbackend.responses.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +24,8 @@ public class AnecdoteService {
     private final TopicRepository topicRepository;
     private final AuthenticationService authenticationService;
     private final RatingRepository ratingRepository;
+
+    private final AnecdoteReportRepository anecdoteReportRepository;
 
     public SuccessResponse createAnecdote(CreateAnecdoteRequest request, User user) {
 
@@ -109,6 +106,19 @@ public class AnecdoteService {
         return UserAnecdoteResponse.builder()
                 .anecdotes(resultAnecdote)
                 .author(new UserDTO(user.get()))
+                .build();
+    }
+
+    public SuccessResponse report(ReportAnecdoteRequest request, Anecdote anecdote) {
+
+        AnecdoteReport report = AnecdoteReport.builder()
+                .anecdote(anecdote)
+                .content(request.getContent())
+                .build();
+        anecdoteReportRepository.save(report);
+
+        return SuccessResponse.builder()
+                .response("Anecdote reported")
                 .build();
     }
 

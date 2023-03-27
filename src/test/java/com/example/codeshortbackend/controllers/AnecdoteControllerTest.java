@@ -4,6 +4,7 @@ import com.example.codeshortbackend.models.Anecdote;
 import com.example.codeshortbackend.models.User;
 import com.example.codeshortbackend.requests.AnecdoteFromTopicsRequest;
 import com.example.codeshortbackend.requests.CreateAnecdoteRequest;
+import com.example.codeshortbackend.requests.ReportAnecdoteRequest;
 import com.example.codeshortbackend.responses.AnecdoteDTO;
 import com.example.codeshortbackend.responses.AnecdotesResponse;
 import com.example.codeshortbackend.responses.SuccessResponse;
@@ -133,6 +134,54 @@ public class AnecdoteControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.anecdotes").isArray())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.anecdotes", hasSize(3)));
 
+    }
+
+    @Test
+    public void reportUser_shouldBadRequest() throws Exception {
+        when(authenticationService.findUser()).thenReturn(Optional.empty());
+
+        mockMvc.perform(MockMvcRequestBuilders
+                .post("/api/anecdote/0/report")
+                .content(asJsonString(ReportAnecdoteRequest.builder()
+                        .content("test")
+                        .build())
+                )
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void reportAnecdote_shouldBadRequest() throws Exception {
+        when(authenticationService.findUser()).thenReturn(Optional.of(new User()));
+        when(anecdoteService.findById(any())).thenReturn(Optional.empty());
+
+        mockMvc.perform(MockMvcRequestBuilders
+                .post("/api/anecdote/0/report")
+                .content(asJsonString(ReportAnecdoteRequest.builder()
+                        .content("test")
+                        .build())
+                )
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void report_isOk() throws Exception {
+        when(authenticationService.findUser()).thenReturn(Optional.of(new User()));
+        when(anecdoteService.findById(any())).thenReturn(Optional.of(new Anecdote()));
+        when(anecdoteService.createAnecdote(any(),any())).thenReturn(SuccessResponse.builder().build());
+
+        mockMvc.perform(MockMvcRequestBuilders
+                .post("/api/anecdote/0/report")
+                .content(asJsonString(ReportAnecdoteRequest.builder()
+                        .content("test")
+                        .build())
+                )
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isOk());
     }
 
     public static String asJsonString(final Object obj) {

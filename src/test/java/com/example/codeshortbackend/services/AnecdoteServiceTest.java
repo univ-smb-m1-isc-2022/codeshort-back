@@ -4,6 +4,7 @@ import com.example.codeshortbackend.models.Anecdote;
 import com.example.codeshortbackend.models.Comment;
 import com.example.codeshortbackend.models.Topic;
 import com.example.codeshortbackend.models.User;
+import com.example.codeshortbackend.repositories.AnecdoteReportRepository;
 import com.example.codeshortbackend.repositories.AnecdoteRepository;
 import com.example.codeshortbackend.repositories.RatingRepository;
 import com.example.codeshortbackend.repositories.TopicRepository;
@@ -39,6 +40,7 @@ public class AnecdoteServiceTest {
     private TopicRepository topicRepository;
     private AuthenticationService authenticationService;
     private RatingRepository ratingRepository;
+    private AnecdoteReportRepository anecdoteReportRepository;
 
     @BeforeEach
     public void init() {
@@ -46,7 +48,8 @@ public class AnecdoteServiceTest {
         authenticationService = mock(AuthenticationService.class);
         topicRepository = mock(TopicRepository.class);
         ratingRepository = mock(RatingRepository.class);
-        anecdoteService = new AnecdoteService(anecdoteRepository, topicRepository, authenticationService, ratingRepository);
+        anecdoteReportRepository = mock(AnecdoteReportRepository.class);
+        anecdoteService = new AnecdoteService(anecdoteRepository, topicRepository, authenticationService, ratingRepository, anecdoteReportRepository);
     }
 
     @Test

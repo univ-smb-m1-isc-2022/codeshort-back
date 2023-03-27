@@ -10,6 +10,7 @@ import com.example.codeshortbackend.repositories.TopicRepository;
 import com.example.codeshortbackend.repositories.UserRepository;
 import com.example.codeshortbackend.requests.CreateAnecdoteRequest;
 import com.example.codeshortbackend.requests.AnecdoteFromTopicsRequest;
+import com.example.codeshortbackend.requests.ReportAnecdoteRequest;
 import com.example.codeshortbackend.responses.*;
 import com.example.codeshortbackend.services.AnecdoteService;
 import com.example.codeshortbackend.services.AuthenticationService;
@@ -73,5 +74,27 @@ public class AnecdoteController {
         }
 
         return ResponseEntity.ok(anecdoteService.allFromUser(author.get()));
+    }
+
+    @PostMapping("/{anecdoteId}/report")
+    public ResponseEntity<?> report(
+            @PathVariable Integer anecdoteId,
+            @RequestBody ReportAnecdoteRequest request
+    ) {
+        Optional<User> user = authenticationService.findUser();
+        if(user.isEmpty()) {
+            return ResponseEntity
+                    .badRequest()
+                    .body("Error, The user doesn't exist");
+        }
+
+        Optional<Anecdote> anecdote = anecdoteService.findById(anecdoteId);
+        if(anecdote.isEmpty()) {
+            return ResponseEntity
+                    .badRequest()
+                    .body("Error, The anecdote doesn't exist");
+        }
+
+        return ResponseEntity.ok(anecdoteService.report(request, anecdote.get()));
     }
 }
