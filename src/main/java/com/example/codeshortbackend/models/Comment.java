@@ -28,9 +28,32 @@ public class Comment {
 
     private String comment;
 
+    private Integer upvotes;
+    private Integer downvotes;
+
+    public void changeUpvote(boolean isIncremented){
+        if (isIncremented) {
+            upvotes++;
+        }
+        else {
+            upvotes--;
+        }
+    }
+
+    public void changeDownvote(boolean isIncremented){
+        if (isIncremented) {
+            downvotes++;
+        }
+        else {
+            downvotes--;
+        }
+    }
+
     public Comment(User user, Anecdote anecdote, String comment) {
         this.user = user;
         this.anecdote = anecdote;
         this.comment = comment;
+        this.upvotes = 0;
+        this.downvotes = 0;
     }
 }

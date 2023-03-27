@@ -3,7 +3,9 @@ package com.example.codeshortbackend.controllers;
 import com.example.codeshortbackend.models.Anecdote;
 import com.example.codeshortbackend.models.Comment;
 import com.example.codeshortbackend.models.User;
+import com.example.codeshortbackend.models.Vote;
 import com.example.codeshortbackend.requests.CreateCommentRequest;
+import com.example.codeshortbackend.requests.RatingRequest;
 import com.example.codeshortbackend.responses.*;
 import com.example.codeshortbackend.services.AnecdoteService;
 import com.example.codeshortbackend.services.AuthenticationService;
@@ -103,6 +105,56 @@ public class CommentControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.comments").exists())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.comments").isArray())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.comments", hasSize(3)));
+    }
+
+    @Test
+    public void rate_userShouldBadRequest() throws Exception {
+        when(authenticationService.findUser()).thenReturn(Optional.empty());
+
+        mockMvc.perform(MockMvcRequestBuilders
+                .post("/api/anecdote/0/comment/0/rating")
+                .content(asJsonString(RatingRequest.builder()
+                        .vote(Vote.NONE)
+                        .starred(true)
+                        .build())
+                )
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void rate_commentShouldBadRequest() throws Exception {
+        when(authenticationService.findUser()).thenReturn(Optional.of(new User()));
+        when(commentService.findById(any())).thenReturn(Optional.empty());
+
+        mockMvc.perform(MockMvcRequestBuilders
+                .post("/api/anecdote/0/comment/0/rating")
+                .content(asJsonString(RatingRequest.builder()
+                        .vote(Vote.NONE)
+                        .starred(true)
+                        .build())
+                )
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void rate_isOk() throws Exception {
+        when(authenticationService.findUser()).thenReturn(Optional.of(new User()));
+        when(commentService.findById(any())).thenReturn(Optional.of(new Comment()));
+
+        mockMvc.perform(MockMvcRequestBuilders
+                .post("/api/anecdote/0/comment/0/rating")
+                .content(asJsonString(RatingRequest.builder()
+                        .vote(Vote.NONE)
+                        .starred(true)
+                        .build())
+                )
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isOk());
     }
 
     public static String asJsonString(final Object obj) {

@@ -35,6 +35,9 @@ public class Anecdote {
     )
     private List<Topic> topics;
 
+    @OneToMany(mappedBy = "anecdote")
+    private List<AnecdoteReport> reports;
+
     private Integer upvotes;
     private Integer downvotes;
 
