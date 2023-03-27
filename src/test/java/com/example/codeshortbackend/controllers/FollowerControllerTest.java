@@ -74,7 +74,6 @@ public class FollowerControllerTest {
         mockMvc.perform(MockMvcRequestBuilders
                 .get("/api/user")
         )
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.usersFollowed").exists())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.usersFollowed").isArray())
@@ -126,6 +125,26 @@ public class FollowerControllerTest {
     }
 
     @Test
+    public void unfollowUser_userNotFoundBadRequest() throws Exception {
+        when(authenticationService.findUser()).thenReturn(Optional.empty());
+        when(userService.findByUsername(anyString())).thenReturn(Optional.of(new User()));
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .post("/api/user/unfollow/username")
+                )
+                .andExpect(status().isBadRequest());
+    }
+    @Test
+    public void unfollowUser_userFollowedNotFoundBadRequest() throws Exception {
+        when(authenticationService.findUser()).thenReturn(Optional.of(new User()));
+        when(userService.findByUsername(anyString())).thenReturn(Optional.empty());
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .post("/api/user/unfollow/username")
+                )
+                .andExpect(status().isBadRequest());
+    }
+    @Test
     public void unfollowUser_userNotFollowedBadRequest() throws Exception {
         when(authenticationService.findUser()).thenReturn(Optional.of(new User()));
         when(userService.findByUsername(anyString())).thenReturn(Optional.of(new User()));
@@ -134,7 +153,6 @@ public class FollowerControllerTest {
         mockMvc.perform(MockMvcRequestBuilders
                         .post("/api/user/unfollow/username")
                 )
-                .andDo(print())
                 .andExpect(status().isBadRequest());
     }
     @Test
