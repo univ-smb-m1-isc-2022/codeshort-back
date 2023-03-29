@@ -7,8 +7,6 @@ import com.example.codeshortbackend.requests.CreateAnecdoteRequest;
 import com.example.codeshortbackend.requests.ReportAnecdoteRequest;
 import com.example.codeshortbackend.responses.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -51,6 +49,29 @@ public class AnecdoteService {
 
         List<Anecdote> anecdotes = anecdoteRepository.findAll();
         Collections.shuffle(anecdotes);
+        List<AnecdoteDTO> resultAnecdote = new ArrayList<>();
+        for (Anecdote a: anecdotes) {
+            if(user.isEmpty()) resultAnecdote.add(new AnecdoteDTO(a));
+            else {
+                Optional<Rating> rating = ratingRepository.findByAnecdoteAndUser(a, user.get());
+                if(rating.isEmpty()) resultAnecdote.add(new AnecdoteDTO(a));
+                else resultAnecdote.add(new AnecdoteDTO(rating.get()));
+            }
+        }
+
+        return AnecdotesResponse.builder()
+                .anecdotes(resultAnecdote)
+                .build();
+    }
+
+    public AnecdotesResponse allPopular() {
+
+        // TODO pagination
+        // TODO prendre les anecdotes de la semaine
+
+        Optional<User> user = authenticationService.findUser();
+
+        List<Anecdote> anecdotes = anecdoteRepository.findTop20ByOrderByUpvotesDesc();
         List<AnecdoteDTO> resultAnecdote = new ArrayList<>();
         for (Anecdote a: anecdotes) {
             if(user.isEmpty()) resultAnecdote.add(new AnecdoteDTO(a));

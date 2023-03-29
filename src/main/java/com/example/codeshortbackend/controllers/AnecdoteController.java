@@ -55,6 +55,11 @@ public class AnecdoteController {
         return ResponseEntity.ok(anecdoteService.allRandom());
     }
 
+    @GetMapping("/popular")
+    public ResponseEntity<?> allPopular() {
+        return ResponseEntity.ok(anecdoteService.allPopular());
+    }
+
     @PostMapping("/topics")
     public ResponseEntity<AnecdotesResponse> allFromTopics(
             @RequestBody AnecdoteFromTopicsRequest request

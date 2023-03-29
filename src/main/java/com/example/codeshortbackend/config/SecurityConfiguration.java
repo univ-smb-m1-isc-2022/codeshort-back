@@ -25,6 +25,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests()
                 .requestMatchers("/api/auth/**",
                         "/api/anecdote/random",
+                        "/api/anecdote/popular",
                         "/images/**",
                         "/api/topic",
                         "/api/anecdote/topics",

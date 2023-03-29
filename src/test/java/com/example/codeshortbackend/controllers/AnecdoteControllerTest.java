@@ -96,6 +96,22 @@ public class AnecdoteControllerTest {
     }
 
     @Test
+    public void allPopular_shouldGiveThree() throws Exception{
+        List<AnecdoteDTO> list = createAnecdotesDTOList(3);
+
+        when(anecdoteService.allPopular()).thenReturn(
+                AnecdotesResponse.builder().anecdotes(list).build()
+        );
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/anecdote/popular"))
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.anecdotes").exists())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.anecdotes").isArray())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.anecdotes", hasSize(3)));
+
+    }
+
+    @Test
     public void allFromTopics_shouldGiveThree() throws Exception{
         List<AnecdoteDTO> list = createAnecdotesDTOList(3);
 
