@@ -1,6 +1,7 @@
 package com.example.codeshortbackend.services;
 
 import com.example.codeshortbackend.models.*;
+import com.example.codeshortbackend.repositories.AnecdoteReportRepository;
 import com.example.codeshortbackend.repositories.AnecdoteRepository;
 import com.example.codeshortbackend.repositories.RatingRepository;
 import com.example.codeshortbackend.repositories.TopicRepository;

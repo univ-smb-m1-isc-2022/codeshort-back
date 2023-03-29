@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -26,5 +27,9 @@ public class TopicService {
         return TopicsResponse.builder()
                 .topics(resultTopic)
                 .build();
+    }
+
+    public Optional<Topic> findByName(String name) {
+        return topicRepository.findByName(name);
     }
 }
