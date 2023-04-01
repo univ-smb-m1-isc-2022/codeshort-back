@@ -6,6 +6,7 @@ import com.example.codeshortbackend.repositories.RatingCommentRepository;
 import com.example.codeshortbackend.requests.CreateCommentRequest;
 import com.example.codeshortbackend.requests.RatingCommentRequest;
 import com.example.codeshortbackend.requests.RatingRequest;
+import com.example.codeshortbackend.responses.AnecdoteDTO;
 import com.example.codeshortbackend.responses.CommentDTO;
 import com.example.codeshortbackend.responses.CommentsResponse;
 import com.example.codeshortbackend.responses.SuccessResponse;
@@ -22,6 +23,7 @@ public class CommentService {
 
     private final CommentRepository commentRepository;
     private final RatingCommentRepository ratingCommentRepository;
+    private final AuthenticationService authenticationService;
 
     public SuccessResponse createComment(User user, Anecdote anecdote, CreateCommentRequest request) {
 
@@ -36,10 +38,17 @@ public class CommentService {
 
     public CommentsResponse all(Anecdote anecdote) {
 
+        Optional<User> user = authenticationService.findUser();
+
         List<CommentDTO> comments = new ArrayList<>();
 
         for (Comment c: anecdote.getComments()) {
-            comments.add(new CommentDTO(c));
+            if(user.isEmpty()) comments.add(new CommentDTO(c));
+            else {
+                Optional<RatingComment> ratingComment = ratingCommentRepository.findByUserAndComment(user.get(), c);
+                if(ratingComment.isEmpty()) comments.add(new CommentDTO(c));
+                else comments.add(new CommentDTO(ratingComment.get()));
+            }
         }
 
         return CommentsResponse.builder()
