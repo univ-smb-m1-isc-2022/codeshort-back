@@ -26,7 +26,7 @@ public class FileService {
 
     public String uploadProfilePicture(MultipartFile file, String username) {
         String extension = file.getOriginalFilename().split("\\.")[1];
-        if(extension == "png" || extension == "jpg") {
+        if(extension.equals("png") || extension.equals("jpg")) {
             String fileName = username + "." + extension;
             Path pathFile = Paths.get(pathImages + "/" + fileName);
             try {
