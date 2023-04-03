@@ -50,6 +50,20 @@ public class AnecdoteController {
         return ResponseEntity.ok(anecdoteService.createAnecdote(request, user.get()));
     }
 
+    @GetMapping("/{anecdoteId}")
+    public ResponseEntity<?> getOne(
+            @PathVariable String anecdoteId
+    ) {
+        Optional<Anecdote> anecdote = anecdoteService.findById(Integer.parseInt(anecdoteId));
+        if(anecdote.isEmpty()){
+            return ResponseEntity
+                    .badRequest()
+                    .body("Error, The anecdote doesn't exist");
+        }
+
+        return ResponseEntity.ok(anecdoteService.getOne(anecdote.get()));
+    }
+
     @GetMapping("/random")
     public ResponseEntity<?> allRandom() {
         return ResponseEntity.ok(anecdoteService.allRandom());

@@ -143,6 +143,11 @@ public class AnecdoteService {
                 .build();
     }
 
+    public AnecdoteResponse getOne( Anecdote anecdote ) {
+        AnecdoteDTO result = new AnecdoteDTO(anecdote);
+        return AnecdoteResponse.builder().anecdote(result).build();
+    }
+
     public Optional<Anecdote> findById( Integer anecdoteId) {
         return anecdoteRepository.findById(anecdoteId);
     }
