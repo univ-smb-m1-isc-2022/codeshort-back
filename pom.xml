@@ -64,6 +64,10 @@
             <artifactId>spring-security-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -78,6 +82,13 @@
                             <artifactId>lombok</artifactId>
                         </exclude>
                     </excludes>
+                    <environmentVariables>
+                        <SPRING_DATASOURCE_URL>jdbc:postgresql://localhost:5432/codeshort</SPRING_DATASOURCE_URL>
+                        <SPRING_DATASOURCE_USERNAME>codeshort</SPRING_DATASOURCE_USERNAME>
+                        <SPRING_DATASOURCE_PASSWORD>codeshort</SPRING_DATASOURCE_PASSWORD>
+                        <SPRING_JPA_HIBERNATE_DDL_AUTO>update</SPRING_JPA_HIBERNATE_DDL_AUTO>
+                        <SPRING_JPA_DATABASE>POSTGRESQL</SPRING_JPA_DATABASE>
+                    </environmentVariables>
                 </configuration>
             </plugin>
         </plugins>
