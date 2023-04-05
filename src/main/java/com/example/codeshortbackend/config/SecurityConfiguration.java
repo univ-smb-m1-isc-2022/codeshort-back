@@ -29,6 +29,7 @@ public class SecurityConfiguration {
                         "/images/**",
                         "/api/topic",
                         "/api/anecdote/{id}",
+                        "/api/anecdote/{id}/report",
                         "/api/anecdote/topics",
                         "/api/anecdote/{anecdoteId}/comment/all",
                         "/api/anecdote/user/{username}"

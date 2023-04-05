@@ -100,13 +100,6 @@ public class AnecdoteController {
             @PathVariable Integer anecdoteId,
             @RequestBody ReportAnecdoteRequest request
     ) {
-        Optional<User> user = authenticationService.findUser();
-        if(user.isEmpty()) {
-            return ResponseEntity
-                    .badRequest()
-                    .body("Error, The user doesn't exist");
-        }
-
         Optional<Anecdote> anecdote = anecdoteService.findById(anecdoteId);
         if(anecdote.isEmpty()) {
             return ResponseEntity
