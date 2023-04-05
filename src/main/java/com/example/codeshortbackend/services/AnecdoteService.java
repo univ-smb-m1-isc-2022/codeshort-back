@@ -126,7 +126,7 @@ public class AnecdoteService {
 
         return UserAnecdoteResponse.builder()
                 .anecdotes(resultAnecdote)
-                .author(new UserDTO(user.get()))
+                .author(new UserDTO(author))
                 .build();
     }
 
