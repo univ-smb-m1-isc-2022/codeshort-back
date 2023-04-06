@@ -14,7 +14,7 @@ import java.nio.file.StandardCopyOption;
 
 @Service
 public class FileService {
-    private final String path = "../codeshort-backend-resources";
+    private final String path = "codeshort-backend-resources";
     private final String pathImages = path + "/images";
 
     public FileService() {
