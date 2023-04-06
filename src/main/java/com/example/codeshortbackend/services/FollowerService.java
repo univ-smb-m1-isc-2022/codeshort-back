@@ -58,9 +58,9 @@ public class FollowerService {
     public UserResponse getUser(User userFollowed, User follower) {
         boolean isFollowed = followerRepository.existsByUserAndFollower(userFollowed, follower);
         return UserResponse.builder()
-                .profilePictureURI(follower.getPictureUri())
+                .profilePictureURI(userFollowed.getPictureUri())
                 .isFollowed(isFollowed)
-                .gitURI(follower.getGithubUri())
+                .gitURI(userFollowed.getGithubUri())
                 .build();
     }
 
